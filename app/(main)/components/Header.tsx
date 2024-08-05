@@ -47,7 +47,7 @@ export const Header = () => {
                 <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             </div>
             <div className="hidden items-center gap-4 md:flex">
-                <Link href="http://localhost:3000/sign-in" className="flex items-center gap-2 text-muted-foreground hover:text-foreground" prefetch={false}>
+                <Link href="/sign-in" className="flex items-center gap-2 text-muted-foreground hover:text-foreground" prefetch={false}>
                     <Button variant="outline" size="sm">
                         Sign In
                     </Button>
