@@ -1,11 +1,60 @@
+"use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { MountainSnowIcon } from "lucide-react"
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import Image from "next/image"
+interface StockData {
+    marketIndex: number;
+    gainers: { name: string; change: number; price: number }[];
+    losers: { name: string; change: number; price: number }[];
+    quotes: { name: string; price: number; change: number }[];
+}
+
+const generateRandomData = (): StockData => {
+    const randomValue = (min: number, max: number) =>
+        (Math.random() * (max - min) + min).toFixed(2);
+
+    return {
+        marketIndex: parseFloat(randomValue(40000, 42000)),
+        gainers: [
+            { name: 'Reliance', change: parseFloat(randomValue(1, 5)), price: parseFloat(randomValue(2400, 2500)) },
+            { name: 'TCS', change: parseFloat(randomValue(1, 5)), price: parseFloat(randomValue(3200, 3300)) },
+            { name: 'HDFC Bank', change: parseFloat(randomValue(1, 5)), price: parseFloat(randomValue(1400, 1500)) },
+            { name: 'Reliance', change: parseFloat(randomValue(1, 5)), price: parseFloat(randomValue(2400, 2500)) },
+            { name: 'HDFC Bank', change: parseFloat(randomValue(1, 5)), price: parseFloat(randomValue(1400, 1500)) },
+        ],
+        losers: [
+            { name: 'Infosys', change: parseFloat(randomValue(-5, -1)), price: parseFloat(randomValue(1600, 1700)) },
+            { name: 'ICICI Bank', change: parseFloat(randomValue(-5, -1)), price: parseFloat(randomValue(800, 900)) },
+            { name: 'Axis Bank', change: parseFloat(randomValue(-5, -1)), price: parseFloat(randomValue(600, 700)) },
+        ],
+        quotes: [
+            { name: 'Reliance', price: parseFloat(randomValue(2400, 2500)), change: parseFloat(randomValue(1, 5)) },
+            { name: 'TCS', price: parseFloat(randomValue(3200, 3300)), change: parseFloat(randomValue(1, 5)) },
+            { name: 'HDFC Bank', price: parseFloat(randomValue(1400, 1500)), change: parseFloat(randomValue(1, 5)) },
+            { name: 'Infosys', price: parseFloat(randomValue(1600, 1700)), change: parseFloat(randomValue(-5, -1)) },
+            { name: 'ICICI Bank', price: parseFloat(randomValue(800, 900)), change: parseFloat(randomValue(-5, -1)) },
+            { name: 'Axis Bank', price: parseFloat(randomValue(600, 700)), change: parseFloat(randomValue(-5, -1)) },
+        ],
+    };
+};
+
 
 export const Stocks = () => {
+
+    const [data, setData] = useState<StockData>(generateRandomData());
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setData(generateRandomData());
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <div className="flex flex-col min-h-screen">
             <main className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 p-4 sm:p-6">
@@ -16,7 +65,7 @@ export const Stocks = () => {
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center justify-between">
-                                <div className="text-4xl font-bold">42,069.42</div>
+                                <div className="text-4xl font-bold">{data.marketIndex.toFixed(2)}</div>
                                 <div className="text-green-500 font-medium">+1.42%</div>
                             </div>
                             <div className="text-sm text-muted-foreground">As of 10:30 AM IST</div>
@@ -28,21 +77,15 @@ export const Stocks = () => {
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-3 gap-2">
-                                <div className="col-span-2 flex items-center gap-2">
-                                    <div className="font-medium">Reliance</div>
-                                    <div className="text-green-500 font-medium">+5.42%</div>
-                                </div>
-                                <div className="text-right">2,450.00</div>
-                                <div className="col-span-2 flex items-center gap-2">
-                                    <div className="font-medium">TCS</div>
-                                    <div className="text-green-500 font-medium">+3.14%</div>
-                                </div>
-                                <div className="text-right">3,250.00</div>
-                                <div className="col-span-2 flex items-center gap-2">
-                                    <div className="font-medium">HDFC Bank</div>
-                                    <div className="text-green-500 font-medium">+2.87%</div>
-                                </div>
-                                <div className="text-right">1,450.00</div>
+                                {data.gainers.map((gainer, index) => (
+                                    <React.Fragment key={index}>
+                                        <div className="col-span-2 flex items-center gap-2">
+                                            <div className="font-medium">{gainer.name}</div>
+                                            <div className="text-green-500 font-medium">+{gainer.change}%</div>
+                                        </div>
+                                        <div className="text-right">{gainer.price.toFixed(2)}</div>
+                                    </React.Fragment>
+                                ))}
                             </div>
                         </CardContent>
                     </Card>
@@ -52,21 +95,15 @@ export const Stocks = () => {
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-3 gap-2">
-                                <div className="col-span-2 flex items-center gap-2">
-                                    <div className="font-medium">Infosys</div>
-                                    <div className="text-red-500 font-medium">-2.42%</div>
-                                </div>
-                                <div className="text-right">1,650.00</div>
-                                <div className="col-span-2 flex items-center gap-2">
-                                    <div className="font-medium">ICICI Bank</div>
-                                    <div className="text-red-500 font-medium">-1.87%</div>
-                                </div>
-                                <div className="text-right">850.00</div>
-                                <div className="col-span-2 flex items-center gap-2">
-                                    <div className="font-medium">Axis Bank</div>
-                                    <div className="text-red-500 font-medium">-1.42%</div>
-                                </div>
-                                <div className="text-right">650.00</div>
+                                {data.losers.map((loser, index) => (
+                                    <React.Fragment key={index}>
+                                        <div className="col-span-2 flex items-center gap-2">
+                                            <div className="font-medium">{loser.name}</div>
+                                            <div className="text-red-500 font-medium">{loser.change}%</div>
+                                        </div>
+                                        <div className="text-right">{loser.price.toFixed(2)}</div>
+                                    </React.Fragment>
+                                ))}
                             </div>
                         </CardContent>
                     </Card>
@@ -76,24 +113,15 @@ export const Stocks = () => {
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-3 gap-2">
-                                <div className="font-medium">Reliance</div>
-                                <div className="text-right">2,450.00</div>
-                                <div className="text-right text-green-500 font-medium">+5.42%</div>
-                                <div className="font-medium">TCS</div>
-                                <div className="text-right">3,250.00</div>
-                                <div className="text-right text-green-500 font-medium">+3.14%</div>
-                                <div className="font-medium">HDFC Bank</div>
-                                <div className="text-right">1,450.00</div>
-                                <div className="text-right text-green-500 font-medium">+2.87%</div>
-                                <div className="font-medium">Infosys</div>
-                                <div className="text-right">1,650.00</div>
-                                <div className="text-right text-red-500 font-medium">-2.42%</div>
-                                <div className="font-medium">ICICI Bank</div>
-                                <div className="text-right">850.00</div>
-                                <div className="text-right text-red-500 font-medium">-1.87%</div>
-                                <div className="font-medium">Axis Bank</div>
-                                <div className="text-right">650.00</div>
-                                <div className="text-right text-red-500 font-medium">-1.42%</div>
+                                {data.quotes.map((quote, index) => (
+                                    <React.Fragment key={index}>
+                                        <div className="font-medium">{quote.name}</div>
+                                        <div className="text-right">{quote.price.toFixed(2)}</div>
+                                        <div className={`text-right ${quote.change >= 0 ? 'text-green-500' : 'text-red-500'} font-medium`}>
+                                            {quote.change}%
+                                        </div>
+                                    </React.Fragment>
+                                ))}
                             </div>
                         </CardContent>
                     </Card>
@@ -106,7 +134,7 @@ export const Stocks = () => {
                         <CardContent>
                             <div className="grid gap-4">
                                 <div className="flex items-start gap-2">
-                                    <img
+                                    <Image
                                         src="/placeholder.svg"
                                         width="48"
                                         height="48"
@@ -120,7 +148,7 @@ export const Stocks = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                    <img
+                                    <Image
                                         src="/placeholder.svg"
                                         width="48"
                                         height="48"
@@ -134,7 +162,7 @@ export const Stocks = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                    <img
+                                    <Image
                                         src="/placeholder.svg"
                                         width="48"
                                         height="48"
